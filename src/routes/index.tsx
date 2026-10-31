@@ -1,24 +1,84 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
+import { searchTemplates, type Template } from "@/lib/search";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Respostas Suporte RAL+" },
+      { name: "description", content: "Pesquise um tema e obtenha a resposta standard do Suporte RAL+." },
+      { property: "og:title", content: "Respostas Suporte RAL+" },
+      { property: "og:description", content: "Pesquise um tema e obtenha a resposta standard do Suporte RAL+." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+const suggestions = ["anexos", "CMD", "advogado", "estrangeiro", "duplicado", "fatura bloqueada", "fechar ticket"];
+
+function greeting() {
+  const h = new Date().getHours();
+  return h < 13 ? "Bom dia" : h < 20 ? "Boa tarde" : "Boa noite";
+}
+
+function Card({ t, open }: { t: Template; open: boolean }) {
+  const [copied, setCopied] = useState(false);
+  const text = t.text.replace(/^Bom dia,/, `${greeting()},`);
+  const copy = async () => {
+    await navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
+    <details open={open} className="group rounded-xl border bg-card shadow-sm">
+      <summary className="flex cursor-pointer list-none items-center gap-3 p-5">
+        <span className="rounded-md bg-accent px-2 py-1 font-mono text-xs text-accent-foreground">{t.id}</span>
+        <span className="flex-1 font-semibold">{t.title}</span>
+        <span className="text-xs text-muted-foreground">{t.category}</span>
+      </summary>
+      <div className="border-t px-5 pb-5 pt-4">
+        {t.note && <p className="mb-3 text-sm italic text-muted-foreground">{t.note}</p>}
+        <pre className="whitespace-pre-wrap rounded-lg bg-muted p-4 font-sans text-sm leading-relaxed">{text}</pre>
+        <button
+          onClick={copy}
+          className="mt-3 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+        >
+          {copied ? "Copiado ✓" : "Copiar resposta"}
+        </button>
+      </div>
+    </details>
+  );
+}
+
+function Index() {
+  const [q, setQ] = useState("");
+  const results = useMemo(() => searchTemplates(q), [q]);
+  return (
+    <main className="mx-auto min-h-screen max-w-3xl px-4 py-12">
+      <h1 className="text-3xl font-bold tracking-tight">Respostas Suporte RAL+</h1>
+      <p className="mt-1 text-muted-foreground">Escreva o tema do ticket e copie a resposta a dar.</p>
+      <input
+        autoFocus
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        placeholder="Ex.: não consegue anexar excel"
+        className="mt-6 w-full rounded-xl border bg-card px-5 py-4 text-lg shadow-sm outline-none focus:ring-2 focus:ring-ring"
       />
-    </div>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {suggestions.map((s) => (
+          <button key={s} onClick={() => setQ(s)} className="rounded-full border px-3 py-1 text-sm hover:bg-accent">
+            {s}
+          </button>
+        ))}
+      </div>
+      <div className="mt-8 space-y-3">
+        {results.length === 0 && <p className="text-muted-foreground">Nenhuma resposta encontrada para este tema.</p>}
+        {results.map((t, i) => (
+          <Card key={t.id} t={t} open={!!q.trim() && i === 0} />
+        ))}
+      </div>
+    </main>
   );
 }
