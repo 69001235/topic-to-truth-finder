@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Manual replies live in src/data/templates.json (from the uploaded manual); team-added replies live in the `respostas` table and are merged into search client-side — keeps the manual versioned while letting the team extend it.

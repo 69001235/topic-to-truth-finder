@@ -1,6 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { customQuery } from "@/lib/respostas";
 import { useMemo, useState } from "react";
-import { searchTemplates, type Template } from "@/lib/search";
+import { searchTemplates, templates, type Template } from "@/lib/search";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -54,10 +56,14 @@ function Card({ t, open }: { t: Template; open: boolean }) {
 
 function Index() {
   const [q, setQ] = useState("");
-  const results = useMemo(() => searchTemplates(q), [q]);
+  const { data: custom = [] } = useQuery(customQuery);
+  const results = useMemo(() => searchTemplates(q, [...custom, ...templates]), [q, custom]);
   return (
     <main className="mx-auto min-h-screen max-w-3xl px-4 py-12">
-      <h1 className="text-3xl font-bold tracking-tight">Respostas Suporte RAL+</h1>
+      <div className="flex items-start justify-between gap-4">
+        <h1 className="text-3xl font-bold tracking-tight">Respostas Suporte RAL+</h1>
+        <Link to="/gerir" className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent">+ Adicionar resposta</Link>
+      </div>
       <p className="mt-1 text-muted-foreground">Escreva o tema do ticket e copie a resposta a dar.</p>
       <input
         autoFocus
@@ -76,7 +82,7 @@ function Index() {
       <div className="mt-8 space-y-3">
         {results.length === 0 && <p className="text-muted-foreground">Nenhuma resposta encontrada para este tema.</p>}
         {results.map((t, i) => (
-          <Card key={t.id} t={t} open={!!q.trim() && i === 0} />
+          <Card key={"uuid" in t ? String(t.uuid) : t.id} t={t} open={!!q.trim() && i === 0} />
         ))}
       </div>
     </main>
