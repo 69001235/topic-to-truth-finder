@@ -1,0 +1,121 @@
+[
+ {
+  "id": "1.1",
+  "title": "Resposta standard (até 2h após a abertura do ticket)",
+  "category": "Respostas gerais",
+  "note": "",
+  "text": "Bom dia, Informamos que a situação reportada se encontra em análise. Voltaremos a contactar oportunamente com uma nova atualização. Cumprimentos, A Equipa de Suporte RAL+"
+ },
+ {
+  "id": "1.2",
+  "title": "Ticket duplicado",
+  "category": "Respostas gerais",
+  "note": "Feche o pedido duplicado indicando o ticket onde o tema está a ser tratado.",
+  "text": "Bom dia, Informamos que este pedido será fechado, dado que o tema reportado está a ser tratado no ticket [nº do ticket]. Ficamos ao dispor para qualquer esclarecimento adicional. Cumprimentos, A Equipa de Suporte RAL+"
+ },
+ {
+  "id": "1.3",
+  "title": "Pedido de informação adicional",
+  "category": "Respostas gerais",
+  "note": "Use quando o ticket não traz detalhes suficientes para analisar o problema.",
+  "text": "Bom dia, Obrigado pelo seu contacto. De forma a podermos analisar a situação reportada, agradecemos que nos forneça informação adicional:\n• Que operação está a tentar realizar na plataforma?\n• Em que página, portal, link ou funcionalidade ocorre a dificuldade de acesso?\n• Qual o método de autenticação que está a utilizar (CMD, Cartão de Cidadão ou outro)?\n• É apresentada alguma mensagem de erro? Em caso afirmativo, agradecemos o envio de uma captura de ecrã.\n• A situação ocorre após a autenticação ou não consegue sequer aceder à página de login? Com estes elementos conseguiremos analisar a situação e prestar o devido apoio. Ficamos a aguardar a sua resposta. Com os melhores cumprimentos, A Equipa de Suporte RAL+"
+ },
+ {
+  "id": "1.4",
+  "title": "Retoma de contacto (sem resposta ao pedido anterior)",
+  "category": "Respostas gerais",
+  "note": "",
+  "text": "Bom dia, Estamos a retomar o contacto relativamente ao report que foi submetido. Para que possamos avançar com a análise e identificar corretamente a origem da situação, necessitamos de informação adicional. Pedimos que, por favor, nos envie os detalhes em falta, nomeadamente:\n• Descrição mais completa do comportamento observado\n• Ecrãs ou mensagens de erro, caso existam\n• Qualquer ação realizada antes da ocorrência Esta informação é essencial para conseguirmos apoiar de forma eficaz. Aguardamos o seu retorno. Com os melhores cumprimentos, A Equipa de Suporte RAL+"
+ },
+ {
+  "id": "1.5",
+  "title": "Fecho de ticket: já foi dada toda a informação disponível",
+  "category": "Respostas gerais",
+  "note": "",
+  "text": "Bom dia, No seguimento da resposta à situação reportada anteriormente e, com a informação já disponibilizada, consideramos que deverá ser suficiente para a resolução do problema. Caso a situação volte a ocorrer, ou necessite de apoio adicional, poderá reabrir o pedido ou criar um novo ticket. Ficamos ao dispor para qualquer esclarecimento adicional. Cumprimentos, A Equipa de Suporte RAL+"
+ },
+ {
+  "id": "1.6",
+  "title": "Fecho de ticket: sem resposta do utilizador",
+  "category": "Respostas gerais",
+  "note": "",
+  "text": "Bom dia, Na sequência da situação reportada e não tendo sido recebida informação adicional que nos permita aprofundar a análise, iremos dar o presente pedido como resolvido. Caso a situação volte a ocorrer, ou caso disponha de mais detalhes que nos permitam investigar o problema, poderá reabrir este pedido ou submeter um novo ticket, indicando, se possível, os passos realizados, a mensagem de erro apresentada e o momento em que a situação ocorreu. Cumprimentos, A Equipa de Suporte RAL+"
+ },
+ {
+  "id": "1.7",
+  "title": "Correção/melhoria já em produção",
+  "category": "Respostas gerais",
+  "note": "Use quando o utilizador reportou um erro ou sugeriu uma melhoria e a alteração já foi publicada.",
+  "text": "Bom dia, Informamos que a correção/melhoria proposta já se encontra em produção. Solicitamos que confirme se a situação ficou resolvida. Caso persista, ou necessite de apoio adicional, poderá responder a este ticket. Ficamos ao dispor para qualquer esclarecimento adicional. Cumprimentos, A Equipa de Suporte RAL+"
+ },
+ {
+  "id": "2.1",
+  "title": "Info para mandatários",
+  "category": "Acesso à plataforma",
+  "note": "",
+  "text": "Bom dia, No seguimento da situação reportada, informamos que precisa apenas das suas credenciais da Ordem dos Advogados e/ou certificado digital para se autenticar na Plataforma RAL+. Deverá usar o seguinte link: https://meiosral.justica.gov.pt/Meios-RAL/Julgados-de-Paz Solicitamos que nos confirme se conseguiu autenticar-se com sucesso. Ficamos ao dispor para qualquer esclarecimento adicional. Cumprimentos, A Equipa de Suporte RAL+"
+ },
+ {
+  "id": "2.2",
+  "title": "Info para cidadãos (iniciar ou consultar processo)",
+  "category": "Acesso à plataforma",
+  "note": "",
+  "text": "Bom dia, Informamos que, para iniciar um processo num Julgado de Paz ou consultar um processo, deverá usar os seguintes links:\n• Iniciar processo num Julgado de Paz: https://justica.gov.pt/Servicos/Iniciar-processo-num-Julgado-de-Paz\n• Consultar processo: https://meiosral.justica.gov.pt/Meios-RAL/Julgados-de-Paz Ficamos ao dispor para qualquer esclarecimento adicional. Cumprimentos, A Equipa de Suporte RAL+"
+ },
+ {
+  "id": "2.3",
+  "title": "Info Chave Móvel Digital (CMD)",
+  "category": "Acesso à plataforma",
+  "note": "",
+  "text": "Bom dia, O acesso à Plataforma RAL+ pelos cidadãos é feito exclusivamente com as credenciais da Chave Móvel Digital (CMD). Para tal, certifique-se de que a sua CMD está ativa. Caso não esteja, deverá proceder à ativação junto de uma Conservatória, conforme o link: Ativar a Chave Móvel Digital. Mais informamos que, de momento, não é possível o acesso à Plataforma RAL+ por parte de cidadãos estrangeiros, mesmo que sejam titulares de Chave Móvel Digital. Caso não disponha de Cartão de Cidadão, ou de Chave Móvel Digital que permita o acesso à Plataforma RAL+, deverá dirigir-se presencialmente a um Julgado de Paz, caso se trate de um processo desse âmbito. Cumprimentos, A Equipa de Suporte RAL+"
+ },
+ {
+  "id": "2.4",
+  "title": "Cidadãos estrangeiros",
+  "category": "Acesso à plataforma",
+  "note": "Use a pergunta de confirmação se não for clara a nacionalidade do utilizador.",
+  "text": "Bom dia, Agradecíamos que nos informasse se é cidadão português. De momento, não é possível o acesso por cidadãos estrangeiros, mesmo que sejam titulares de Chave Móvel Digital. Caso não disponha de Cartão de Cidadão ou de Chave Móvel Digital que permita o acesso à Plataforma RAL+, deverá dirigir-se presencialmente a um Julgado de Paz, caso se trate de um processo desse âmbito, ou contactar a entidade gestora do Sistema de Mediação Familiar e Laboral, através do endereço eletrónico informação.ral@dgpj.mj.pt, caso se trate de um processo de mediação. Cumprimentos, A Equipa de Suporte RAL+"
+ },
+ {
+  "id": "2.5",
+  "title": "Resumo completo de acessos (resposta única)",
+  "category": "Acesso à plataforma",
+  "note": "Use quando o utilizador não sabe qual o seu perfil ou quando convém responder a tudo de uma só vez.",
+  "text": "Bom dia, Relativamente à Plataforma RAL+, informamos o seguinte:\n1. Os mandatários devem autenticar-se com as respetivas credenciais da Ordem dos Advogados e/ou certificado digital, através de: https://meiosral.justica.gov.pt/Meios-RAL/Julgados-de-Paz\n2. Para iniciar um processo num Julgado de Paz, deverá utilizar: https://justica.gov.pt/Servicos/Iniciar-processo-num-Julgado-de-Paz\n3. Para consultar um processo, deverá aceder através de: https://meiosral.justica.gov.pt/Meios-RAL/Julgados-de-Paz\n4. O acesso dos cidadãos é feito exclusivamente com as credenciais da Chave Móvel Digital (CMD). Caso a CMD não esteja ativa, deverá proceder à sua ativação junto dos serviços competentes.\n5. De momento, não é possível o acesso à Plataforma RAL+ por cidadãos estrangeiros, mesmo que sejam titulares de Chave Móvel Digital.\n6. Caso não disponha de Cartão de Cidadão ou de Chave Móvel Digital válida para acesso à plataforma, deverá dirigir-se presencialmente a um Julgado de Paz, caso o assunto se enquadre nesse âmbito. Solicitamos que nos confirme se conseguiu aceder e autenticar-se com sucesso na plataforma. Ficamos ao dispor para qualquer esclarecimento adicional. Com os melhores cumprimentos, A Equipa de Suporte RAL+"
+ },
+ {
+  "id": "3.1",
+  "title": "Resposta ao utilizador",
+  "category": "Indisponibilidade da Chave Móvel Digital",
+  "note": "",
+  "text": "Bom dia, Informamos que a Chave Móvel Digital (CMD) é gerida pela ARTE (Agência para a Reforma Tecnológica do Estado) e não depende de intervenção da DGPJ, pelo que deverá tentar novamente ou utilizar outro browser. Ficamos ao dispor para qualquer esclarecimento adicional. Cumprimentos, A Equipa de Suporte RAL+"
+ },
+ {
+  "id": "3.2",
+  "title": "Escalonamento: email para a ARTE",
+  "category": "Indisponibilidade da Chave Móvel Digital",
+  "note": "Quando suspeitarmos de indisponibilidade da CMD (por exemplo, vários tickets sobre o mesmo problema no Helpdesk), o contacto na ARTE é o Rui Martinho. Depois da confirmação da ARTE, responda aos tickets com o modelo 3.1 e, se for o caso, feche os restantes como duplicados (1.2).",
+  "text": "----------------------------------------------------------------------- Campo          Valor -------------- -------------------------------------------------------- Para           Rui Martinho <rui.martinho@arte.gov.pt> Cc             Carlos e Rui (equipa interna) ----------------------------------------------------------------------- Olá Rui, Pode, por favor, confirmar se existe algum constrangimento na plataforma? Recebemos alguns tickets no Helpdesk. Obrigada. Cumprimentos, [nome]"
+ },
+ {
+  "id": "4",
+  "title": "Anexos permitidos na plataforma",
+  "category": "Anexos permitidos na plataforma",
+  "note": "A plataforma só aceita os formatos abaixo; ficheiros Excel não são permitidos.",
+  "text": "----------------------------------------------------------------------- Formato                             Tamanho máximo ----------------------------------- ----------------------------------- PDF                                 20 MB PNG                                 10 MB JPEG                                10 MB SVG                                 10 MB MP4                                 100 MB MP3                                 100 MB AAC                                 100 MB OGG                                 100 MB ----------------------------------------------------------------------- Bom dia, No seguimento da situação reportada, informamos que a Plataforma RAL+ permite apenas anexar ficheiros nos seguintes formatos:\n• PDF (máx. 20 MB)\n• PNG, JPEG e SVG (máx. 10 MB cada)\n• MP4, MP3, AAC e OGG (máx. 100 MB cada) Ficheiros Excel não estão incluídos. Consideramos que a informação aqui disponibilizada deverá ser suficiente para a resolução deste ticket, pelo que iremos dá-lo como encerrado. Ficamos ao dispor para qualquer esclarecimento adicional. Cumprimentos, A Equipa de Suporte RAL+"
+ },
+ {
+  "id": "5",
+  "title": "Faturas-recibo bloqueadas",
+  "category": "Faturas-recibo bloqueadas",
+  "note": "Use quando o utilizador reporta que não consegue submeter faturas-recibo porque o item está bloqueado (\"Não consigo submeter as faturas recibo (item bloqueado) referentes aos seguintes processos\"). O item só fica disponível depois de a Contabilidade pedir a respetiva fatura/recibo.",
+  "text": "Bom dia, Deverá aguardar que a Contabilidade efetue o pedido da respetiva fatura/recibo. Após esse procedimento, a situação ficará disponível para tratamento. Cumprimentos, A Equipa de Suporte RAL+"
+ },
+ {
+  "id": "6",
+  "title": "Comunicação a mediadores: Academia DGPJ",
+  "category": "Comunicação a mediadores: Academia DGPJ",
+  "note": "Mensagem informativa para os Mediadores de Julgados de Paz sobre as formações disponíveis. Não é uma resposta a ticket; é enviada quando houver comunicação a toda a classe.",
+  "text": "Exmos./as. Senhores/as Mediadores/as dos Julgados de Paz, No âmbito da capacitação contínua dos Mediadores dos Julgados de Paz, vimos por este meio promover e reforçar o acesso às formações disponibilizadas na Academia DGPJ. Informamos que se encontram ativos os acessos para todos os Mediadores de Julgados de Paz aos seguintes cursos:\n• \"Mediadores de Julgados de Paz\": curso dedicado à utilização do módulo dos Julgados de Paz na Plataforma RAL+, que orienta os mediadores na execução das suas tarefas diárias.\n• \"Sessão de Mediadores – novembro de 2025\": sessão dirigida aos mediadores que assumiram funções nos serviços de mediação dos julgados de paz, mas que, por ser oportuna a sua divulgação, passa a estar disponível para todos os mediadores. Adicionalmente, a Academia DGPJ disponibiliza o curso de \"Simplificação da Linguagem\", em regime de acesso livre, mediante autoinscrição. Acesso direto à Academia DGPJ: https://academia.dgpj.justica.gov.pt/ Acreditamos que estas formações constituem um importante contributo para o exercício qualificado das funções de mediação, promovendo simultaneamente a uniformização de práticas e a melhoria da comunicação com os cidadãos. Para apoio, entrar em contacto com:\n• Apoio tecnológico: servicedesk@dgpj.mj.pt\n• Apoio pedagógico: academia@dgpj.mj.pt Com os melhores cumprimentos, Pela equipa da Academia DGPJ e de Suporte ao RAL+"
+ }
+]
