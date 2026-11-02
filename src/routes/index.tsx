@@ -6,7 +6,14 @@ import { customQuery } from "@/lib/respostas";
 import { useEffect, useMemo, useState } from "react";
 import { searchTemplates, templates, type Template } from "@/lib/search";
 
+/** Keeps the typed search term in the URL so returning from editing lands back on it. */
+export const indexSearch = (s: Record<string, unknown>): { q?: string } => {
+  const q = typeof s["q"] === "string" ? s["q"] : "";
+  return q ? { q } : {};
+};
+
 export const Route = createFileRoute("/")({
+  validateSearch: indexSearch,
   head: () => ({
     meta: [
       { title: "Respostas Suporte RAL+" },
@@ -27,7 +34,7 @@ function greeting() {
   return h < 13 ? "Bom dia" : h < 20 ? "Boa tarde" : "Boa noite";
 }
 
-function Card({ t, open, uuid, signedIn }: { t: Template; open: boolean; uuid?: string | undefined; signedIn: boolean }) {
+function Card({ t, open, uuid, signedIn, q }: { t: Template; open: boolean; uuid?: string | undefined; signedIn: boolean; q: string }) {
   const qc = useQueryClient();
   const [copied, setCopied] = useState(false);
   const text = t.text.replace(/^Bom dia,/, `${greeting()},`);
@@ -63,7 +70,7 @@ function Card({ t, open, uuid, signedIn }: { t: Template; open: boolean; uuid?: 
             <>
               <Link
                 to="/gerir"
-                search={{ editar: uuid }}
+                search={{ editar: uuid, q }}
                 className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent"
               >
                 Editar
@@ -91,7 +98,8 @@ function Card({ t, open, uuid, signedIn }: { t: Template; open: boolean; uuid?: 
 }
 
 function Index() {
-  const [q, setQ] = useState("");
+  const { q: initialQ } = Route.useSearch();
+  const [q, setQ] = useState(initialQ ?? "");
   const [signedIn, setSignedIn] = useState(false);
   useEffect(() => {
     let on = true;
@@ -134,6 +142,7 @@ function Index() {
             t={t}
             uuid={"uuid" in t ? String(t.uuid) : undefined}
             signedIn={signedIn}
+            q={q}
             open={!!q.trim() && i === 0}
           />
 
