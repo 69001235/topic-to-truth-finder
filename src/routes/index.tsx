@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { customQuery } from "@/lib/respostas";
+
 import { useMemo, useState } from "react";
 import { searchTemplates, templates, type Template } from "@/lib/search";
 
@@ -25,7 +27,8 @@ function greeting() {
   return h < 13 ? "Bom dia" : h < 20 ? "Boa tarde" : "Boa noite";
 }
 
-function Card({ t, open, uuid }: { t: Template; open: boolean; uuid?: string | undefined }) {
+function Card({ t, open, uuid, signedIn }: { t: Template; open: boolean; uuid?: string | undefined; signedIn: boolean }) {
+  const qc = useQueryClient();
   const [copied, setCopied] = useState(false);
   const text = t.text.replace(/^Bom dia,/, `${greeting()},`);
   const copy = async () => {
@@ -33,6 +36,12 @@ function Card({ t, open, uuid }: { t: Template; open: boolean; uuid?: string | u
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
+  const remove = async () => {
+    if (!uuid || !confirm("Apagar esta resposta?")) return;
+    await supabase.from("respostas").delete().eq("id", uuid);
+    qc.invalidateQueries({ queryKey: ["respostas"] });
+  };
+
   return (
     <details open={open} className="group rounded-xl border bg-card shadow-sm">
       <summary className="flex cursor-pointer list-none items-center gap-3 p-5">
@@ -51,14 +60,29 @@ function Card({ t, open, uuid }: { t: Template; open: boolean; uuid?: string | u
             {copied ? "Copiado ✓" : "Copiar resposta"}
           </button>
           {uuid && (
-            <Link
-              to="/gerir"
-              search={{ editar: uuid }}
-              className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent"
-            >
-              Editar
-            </Link>
+            <>
+              <Link
+                to="/gerir"
+                search={{ editar: uuid }}
+                className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent"
+              >
+                Editar
+              </Link>
+              {signedIn ? (
+                <button
+                  onClick={remove}
+                  className="rounded-md border px-4 py-2 text-sm font-medium text-destructive hover:bg-accent"
+                >
+                  Apagar
+                </button>
+              ) : (
+                <Link to="/auth" className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent">
+                  Entrar para apagar
+                </Link>
+              )}
+            </>
           )}
+
         </div>
 
       </div>
