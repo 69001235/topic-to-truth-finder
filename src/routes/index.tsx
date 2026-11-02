@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { customQuery } from "@/lib/respostas";
-import { useMemo, useState } from "react";
+
+import { useEffect, useMemo, useState } from "react";
 import { searchTemplates, templates, type Template } from "@/lib/search";
 
 export const Route = createFileRoute("/")({
@@ -25,7 +27,8 @@ function greeting() {
   return h < 13 ? "Bom dia" : h < 20 ? "Boa tarde" : "Boa noite";
 }
 
-function Card({ t, open }: { t: Template; open: boolean }) {
+function Card({ t, open, uuid, signedIn }: { t: Template; open: boolean; uuid?: string | undefined; signedIn: boolean }) {
+  const qc = useQueryClient();
   const [copied, setCopied] = useState(false);
   const text = t.text.replace(/^Bom dia,/, `${greeting()},`);
   const copy = async () => {
@@ -33,6 +36,12 @@ function Card({ t, open }: { t: Template; open: boolean }) {
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
+  const remove = async () => {
+    if (!uuid || !confirm("Apagar esta resposta?")) return;
+    await supabase.from("respostas").delete().eq("id", uuid);
+    qc.invalidateQueries({ queryKey: ["respostas"] });
+  };
+
   return (
     <details open={open} className="group rounded-xl border bg-card shadow-sm">
       <summary className="flex cursor-pointer list-none items-center gap-3 p-5">
@@ -43,12 +52,39 @@ function Card({ t, open }: { t: Template; open: boolean }) {
       <div className="border-t px-5 pb-5 pt-4">
         {t.note && <p className="mb-3 text-sm italic text-muted-foreground">{t.note}</p>}
         <pre className="whitespace-pre-wrap rounded-lg bg-muted p-4 font-sans text-sm leading-relaxed">{text}</pre>
-        <button
-          onClick={copy}
-          className="mt-3 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-        >
-          {copied ? "Copiado ✓" : "Copiar resposta"}
-        </button>
+        <div className="mt-3 flex items-center gap-3">
+          <button
+            onClick={copy}
+            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+          >
+            {copied ? "Copiado ✓" : "Copiar resposta"}
+          </button>
+          {uuid && (
+            <>
+              <Link
+                to="/gerir"
+                search={{ editar: uuid }}
+                className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent"
+              >
+                Editar
+              </Link>
+              {signedIn ? (
+                <button
+                  onClick={remove}
+                  className="rounded-md border px-4 py-2 text-sm font-medium text-destructive hover:bg-accent"
+                >
+                  Apagar
+                </button>
+              ) : (
+                <Link to="/auth" className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent">
+                  Entrar para apagar
+                </Link>
+              )}
+            </>
+          )}
+
+        </div>
+
       </div>
     </details>
   );
@@ -56,8 +92,19 @@ function Card({ t, open }: { t: Template; open: boolean }) {
 
 function Index() {
   const [q, setQ] = useState("");
+  const [signedIn, setSignedIn] = useState(false);
+  useEffect(() => {
+    let on = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (on) setSignedIn(!!data.session);
+    });
+    return () => {
+      on = false;
+    };
+  }, []);
   const { data: custom = [] } = useQuery(customQuery);
   const results = useMemo(() => searchTemplates(q, [...custom, ...templates]), [q, custom]);
+
   return (
     <main className="mx-auto min-h-screen max-w-3xl px-4 py-12">
       <div className="flex items-start justify-between gap-4">
@@ -82,8 +129,16 @@ function Index() {
       <div className="mt-8 space-y-3">
         {results.length === 0 && <p className="text-muted-foreground">Nenhuma resposta encontrada para este tema.</p>}
         {results.map((t, i) => (
-          <Card key={"uuid" in t ? String(t.uuid) : t.id} t={t} open={!!q.trim() && i === 0} />
+          <Card
+            key={"uuid" in t ? String(t.uuid) : t.id}
+            t={t}
+            uuid={"uuid" in t ? String(t.uuid) : undefined}
+            signedIn={signedIn}
+            open={!!q.trim() && i === 0}
+          />
+
         ))}
+
       </div>
     </main>
   );
