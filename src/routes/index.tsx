@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { customQuery } from "@/lib/respostas";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { searchTemplates, templates, type Template } from "@/lib/search";
 
 export const Route = createFileRoute("/")({
@@ -92,8 +92,19 @@ function Card({ t, open, uuid, signedIn }: { t: Template; open: boolean; uuid?: 
 
 function Index() {
   const [q, setQ] = useState("");
+  const [signedIn, setSignedIn] = useState(false);
+  useEffect(() => {
+    let on = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (on) setSignedIn(!!data.session);
+    });
+    return () => {
+      on = false;
+    };
+  }, []);
   const { data: custom = [] } = useQuery(customQuery);
   const results = useMemo(() => searchTemplates(q, [...custom, ...templates]), [q, custom]);
+
   return (
     <main className="mx-auto min-h-screen max-w-3xl px-4 py-12">
       <div className="flex items-start justify-between gap-4">
@@ -122,8 +133,10 @@ function Index() {
             key={"uuid" in t ? String(t.uuid) : t.id}
             t={t}
             uuid={"uuid" in t ? String(t.uuid) : undefined}
+            signedIn={signedIn}
             open={!!q.trim() && i === 0}
           />
+
         ))}
 
       </div>
