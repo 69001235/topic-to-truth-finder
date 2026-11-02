@@ -25,7 +25,7 @@ function greeting() {
   return h < 13 ? "Bom dia" : h < 20 ? "Boa tarde" : "Boa noite";
 }
 
-function Card({ t, open }: { t: Template; open: boolean }) {
+function Card({ t, open, uuid }: { t: Template; open: boolean; uuid?: string }) {
   const [copied, setCopied] = useState(false);
   const text = t.text.replace(/^Bom dia,/, `${greeting()},`);
   const copy = async () => {
@@ -43,12 +43,24 @@ function Card({ t, open }: { t: Template; open: boolean }) {
       <div className="border-t px-5 pb-5 pt-4">
         {t.note && <p className="mb-3 text-sm italic text-muted-foreground">{t.note}</p>}
         <pre className="whitespace-pre-wrap rounded-lg bg-muted p-4 font-sans text-sm leading-relaxed">{text}</pre>
-        <button
-          onClick={copy}
-          className="mt-3 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-        >
-          {copied ? "Copiado ✓" : "Copiar resposta"}
-        </button>
+        <div className="mt-3 flex items-center gap-3">
+          <button
+            onClick={copy}
+            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+          >
+            {copied ? "Copiado ✓" : "Copiar resposta"}
+          </button>
+          {uuid && (
+            <Link
+              to="/gerir"
+              search={{ editar: uuid }}
+              className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent"
+            >
+              Editar
+            </Link>
+          )}
+        </div>
+
       </div>
     </details>
   );
