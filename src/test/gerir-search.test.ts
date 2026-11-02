@@ -8,8 +8,8 @@ describe("gerir search params", () => {
   });
 
   it("ignores a missing or non-text id and stays in add mode", () => {
-    expect(gerirSearch({})).toEqual({ editar: undefined });
-    expect(gerirSearch({ editar: "" })).toEqual({ editar: undefined });
-    expect(gerirSearch({ editar: 12 })).toEqual({ editar: undefined });
+    expect(gerirSearch({})).toEqual({});
+    expect(gerirSearch({ editar: "" })).toEqual({});
+    expect(gerirSearch({ editar: 12 })).toEqual({});
   });
 });

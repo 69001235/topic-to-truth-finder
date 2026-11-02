@@ -5,9 +5,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { customQuery } from "@/lib/respostas";
 
 /** `?editar=<id>` opens the form with that answer loaded for editing. */
-export const gerirSearch = (s: Record<string, unknown>) => ({
-  editar: typeof s.editar === "string" && s.editar ? s.editar : undefined,
-});
+export const gerirSearch = (s: Record<string, unknown>): { editar?: string } => {
+  const id = typeof s["editar"] === "string" ? s["editar"] : "";
+  return id ? { editar: id } : {};
+};
+
 
 export const Route = createFileRoute("/_authenticated/gerir")({
   validateSearch: gerirSearch,

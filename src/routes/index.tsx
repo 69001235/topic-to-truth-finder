@@ -25,7 +25,7 @@ function greeting() {
   return h < 13 ? "Bom dia" : h < 20 ? "Boa tarde" : "Boa noite";
 }
 
-function Card({ t, open, uuid }: { t: Template; open: boolean; uuid?: string }) {
+function Card({ t, open, uuid }: { t: Template; open: boolean; uuid?: string | undefined }) {
   const [copied, setCopied] = useState(false);
   const text = t.text.replace(/^Bom dia,/, `${greeting()},`);
   const copy = async () => {
