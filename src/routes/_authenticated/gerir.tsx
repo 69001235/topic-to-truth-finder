@@ -118,7 +118,7 @@ function Gerir() {
   return (
     <main className="mx-auto min-h-screen max-w-3xl px-4 py-12">
       <div className="flex items-center justify-between">
-        <Link to="/" className="text-sm text-muted-foreground hover:underline">← Voltar à pesquisa</Link>
+        <Link to="/" search={q ? { q } : {}} className="text-sm text-muted-foreground hover:underline">← Voltar à pesquisa</Link>
         <button onClick={signOut} className="text-sm text-muted-foreground hover:underline">Sair</button>
       </div>
       <h1 className="mt-4 text-3xl font-bold tracking-tight">{editing ? "Editar resposta" : "Adicionar resposta"}</h1>
