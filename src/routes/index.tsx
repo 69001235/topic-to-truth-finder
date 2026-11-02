@@ -94,8 +94,14 @@ function Index() {
       <div className="mt-8 space-y-3">
         {results.length === 0 && <p className="text-muted-foreground">Nenhuma resposta encontrada para este tema.</p>}
         {results.map((t, i) => (
-          <Card key={"uuid" in t ? String(t.uuid) : t.id} t={t} open={!!q.trim() && i === 0} />
+          <Card
+            key={"uuid" in t ? String(t.uuid) : t.id}
+            t={t}
+            uuid={"uuid" in t ? String(t.uuid) : undefined}
+            open={!!q.trim() && i === 0}
+          />
         ))}
+
       </div>
     </main>
   );
