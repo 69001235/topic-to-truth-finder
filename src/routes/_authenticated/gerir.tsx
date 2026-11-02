@@ -4,10 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { customQuery } from "@/lib/respostas";
 
-/** `?editar=<id>` opens the form with that answer loaded for editing. */
-export const gerirSearch = (s: Record<string, unknown>): { editar?: string } => {
+/** `?editar=<id>` opens the form with that answer loaded; `?q=` keeps the search term to return to. */
+export const gerirSearch = (s: Record<string, unknown>): { editar?: string; q?: string } => {
   const id = typeof s["editar"] === "string" ? s["editar"] : "";
-  return id ? { editar: id } : {};
+  const q = typeof s["q"] === "string" ? s["q"] : "";
+  return { ...(id ? { editar: id } : {}), ...(q ? { q } : {}) };
 };
 
 
@@ -32,7 +33,7 @@ const empty = { title: "", keywords: "", note: "", text: "Bom dia,\n\n\n\nCumpri
 function Gerir() {
   const qc = useQueryClient();
   const navigate = useNavigate();
-  const { editar } = Route.useSearch();
+  const { editar, q } = Route.useSearch();
   const { data = [] } = useQuery(customQuery);
   const [form, setForm] = useState(empty);
   const [editing, setEditing] = useState<string | null>(null);
@@ -55,6 +56,9 @@ function Gerir() {
     if (editar) navigate({ to: "/gerir", search: {}, replace: true });
   };
 
+  /** Returns to the search screen, restoring the term the person had typed. */
+  const backToSearch = () => navigate({ to: "/", search: q ? { q } : {}, replace: true });
+
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
     const row = { title: form.title.trim(), keywords: form.keywords.trim(), note: form.note.trim(), text: form.text.trim() };
@@ -62,12 +66,19 @@ function Gerir() {
       ? await supabase.from("respostas").update(row).eq("id", editing)
       : await supabase.from("respostas").insert(row);
     if (error) return setMsg("Não foi possível guardar: " + error.message);
-    setMsg(editing ? "Resposta atualizada." : "Resposta adicionada.");
+    qc.invalidateQueries({ queryKey: ["respostas"] });
+    // An edited answer goes straight back to the search it came from.
+    if (editing) {
+      setEditing(null);
+      setForm(empty);
+      loaded.current = null;
+      backToSearch();
+      return;
+    }
+    setMsg("Resposta adicionada.");
     setForm(empty);
-    setEditing(null);
     loaded.current = null;
     clearParam();
-    qc.invalidateQueries({ queryKey: ["respostas"] });
   };
 
   const remove = async (uuid: string) => {
@@ -77,9 +88,9 @@ function Gerir() {
       setEditing(null);
       setForm(empty);
       loaded.current = null;
-      clearParam();
     }
     qc.invalidateQueries({ queryKey: ["respostas"] });
+    backToSearch();
   };
 
   const startEdit = (r: { uuid: string; title: string; keywords: string; note: string; text: string }) => {
@@ -107,7 +118,7 @@ function Gerir() {
   return (
     <main className="mx-auto min-h-screen max-w-3xl px-4 py-12">
       <div className="flex items-center justify-between">
-        <Link to="/" className="text-sm text-muted-foreground hover:underline">← Voltar à pesquisa</Link>
+        <Link to="/" search={q ? { q } : {}} className="text-sm text-muted-foreground hover:underline">← Voltar à pesquisa</Link>
         <button onClick={signOut} className="text-sm text-muted-foreground hover:underline">Sair</button>
       </div>
       <h1 className="mt-4 text-3xl font-bold tracking-tight">{editing ? "Editar resposta" : "Adicionar resposta"}</h1>
