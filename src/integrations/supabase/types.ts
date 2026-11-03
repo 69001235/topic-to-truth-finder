@@ -16,29 +16,35 @@ export type Database = {
     Tables: {
       respostas: {
         Row: {
+          category: string
           created_at: string
           created_by: string
           id: string
           keywords: string
           note: string
+          ref: string
           text: string
           title: string
         }
         Insert: {
+          category?: string
           created_at?: string
           created_by?: string
           id?: string
           keywords?: string
           note?: string
+          ref?: string
           text: string
           title: string
         }
         Update: {
+          category?: string
           created_at?: string
           created_by?: string
           id?: string
           keywords?: string
           note?: string
+          ref?: string
           text?: string
           title?: string
         }
