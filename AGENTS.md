@@ -9,4 +9,4 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-- Manual replies live in src/data/templates.json (from the uploaded manual); team-added replies live in the `respostas` table and are merged into search client-side — keeps the manual versioned while letting the team extend it.
+- All replies (manual + team-added) live in the `respostas` table (`ref` = manual number, `category`); src/data/templates.json is only the original seed and test fixture — so every reply is editable/deletable.

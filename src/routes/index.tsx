@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { customQuery } from "@/lib/respostas";
 
 import { useEffect, useMemo, useState } from "react";
-import { searchTemplates, templates, type Template } from "@/lib/search";
+import { searchTemplates, type Template } from "@/lib/search";
 
 /** Keeps the typed search term in the URL so returning from editing lands back on it. */
 export const indexSearch = (s: Record<string, unknown>): { q?: string } => {
@@ -111,7 +111,7 @@ function Index() {
     };
   }, []);
   const { data: custom = [] } = useQuery(customQuery);
-  const results = useMemo(() => searchTemplates(q, [...custom, ...templates]), [q, custom]);
+  const results = useMemo(() => searchTemplates(q, custom), [q, custom]);
 
   return (
     <main className="mx-auto min-h-screen max-w-3xl px-4 py-12">
