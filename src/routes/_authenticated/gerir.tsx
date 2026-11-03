@@ -67,18 +67,11 @@ function Gerir() {
       : await supabase.from("respostas").insert(row);
     if (error) return setMsg("Não foi possível guardar: " + error.message);
     qc.invalidateQueries({ queryKey: ["respostas"] });
-    // An edited answer goes straight back to the search it came from.
-    if (editing) {
-      setEditing(null);
-      setForm(empty);
-      loaded.current = null;
-      backToSearch();
-      return;
-    }
-    setMsg("Resposta adicionada.");
+    setEditing(null);
     setForm(empty);
     loaded.current = null;
-    clearParam();
+    // Adding and editing both go straight back to the search it came from.
+    backToSearch();
   };
 
   const remove = async (uuid: string) => {

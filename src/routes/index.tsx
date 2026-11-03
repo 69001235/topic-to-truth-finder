@@ -117,7 +117,7 @@ function Index() {
     <main className="mx-auto min-h-screen max-w-3xl px-4 py-12">
       <div className="flex items-start justify-between gap-4">
         <h1 className="text-3xl font-bold tracking-tight">Respostas Suporte RAL+</h1>
-        <Link to="/gerir" className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent">+ Adicionar resposta</Link>
+        <Link to="/gerir" search={q ? { q } : {}} className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent">+ Adicionar resposta</Link>
       </div>
       <p className="mt-1 text-muted-foreground">Escreva o tema do ticket e copie a resposta a dar.</p>
       <input
