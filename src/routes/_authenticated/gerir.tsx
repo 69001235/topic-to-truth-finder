@@ -110,6 +110,15 @@ function Gerir() {
     navigate({ to: "/auth", replace: true });
   };
 
+  if (!perms) return null;
+  if (!(editar ? perms.edit : perms.create))
+    return (
+      <main className="mx-auto max-w-3xl px-4 py-12">
+        <p>Não tem permissão para {editar ? "alterar" : "criar"} respostas.</p>
+        <Link to="/" search={q ? { q } : {}} className="mt-4 inline-block underline">Voltar à pesquisa</Link>
+      </main>
+    );
+
   return (
     <main className="mx-auto min-h-screen max-w-3xl px-4 py-12">
       <div className="flex items-center justify-between">
