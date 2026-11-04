@@ -50,12 +50,42 @@ export type Database = {
         }
         Relationships: []
       }
+      utilizadores: {
+        Row: {
+          can_create: boolean
+          can_delete: boolean
+          can_edit: boolean
+          can_search: boolean
+          created_at: string
+          email: string
+          is_admin: boolean
+        }
+        Insert: {
+          can_create?: boolean
+          can_delete?: boolean
+          can_edit?: boolean
+          can_search?: boolean
+          created_at?: string
+          email: string
+          is_admin?: boolean
+        }
+        Update: {
+          can_create?: boolean
+          can_delete?: boolean
+          can_edit?: boolean
+          can_search?: boolean
+          created_at?: string
+          email?: string
+          is_admin?: boolean
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      tem_permissao: { Args: { _perm: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
