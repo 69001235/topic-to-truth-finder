@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { customQuery } from "@/lib/respostas";
+import { permissoesQuery } from "@/lib/permissoes";
 
 /** `?editar=<id>` opens the form with that answer loaded; `?q=` keeps the search term to return to. */
 export const gerirSearch = (s: Record<string, unknown>): { editar?: string; q?: string } => {
@@ -35,6 +36,7 @@ function Gerir() {
   const navigate = useNavigate();
   const { editar, q } = Route.useSearch();
   const { data = [] } = useQuery(customQuery);
+  const { data: perms } = useQuery(permissoesQuery);
   const [form, setForm] = useState(empty);
   const [editing, setEditing] = useState<string | null>(null);
   const [msg, setMsg] = useState("");
@@ -107,6 +109,15 @@ function Gerir() {
     await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
   };
+
+  if (!perms) return null;
+  if (!(editar ? perms.edit : perms.create))
+    return (
+      <main className="mx-auto max-w-3xl px-4 py-12">
+        <p>Não tem permissão para {editar ? "alterar" : "criar"} respostas.</p>
+        <Link to="/" search={q ? { q } : {}} className="mt-4 inline-block underline">Voltar à pesquisa</Link>
+      </main>
+    );
 
   return (
     <main className="mx-auto min-h-screen max-w-3xl px-4 py-12">

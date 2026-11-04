@@ -2,8 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { customQuery } from "@/lib/respostas";
+import { permissoesQuery, type Permissoes } from "@/lib/permissoes";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { searchTemplates, type Template } from "@/lib/search";
 
 /** Keeps the typed search term in the URL so returning from editing lands back on it. */
@@ -34,7 +35,7 @@ function greeting() {
   return h < 13 ? "Bom dia" : h < 20 ? "Boa tarde" : "Boa noite";
 }
 
-function Card({ t, open, uuid, signedIn, q }: { t: Template; open: boolean; uuid?: string | undefined; signedIn: boolean; q: string }) {
+function Card({ t, open, uuid, perms, q }: { t: Template; open: boolean; uuid?: string | undefined; perms: Permissoes; q: string }) {
   const qc = useQueryClient();
   const [copied, setCopied] = useState(false);
   const text = t.text.replace(/^Bom dia,/, `${greeting()},`);
@@ -66,30 +67,16 @@ function Card({ t, open, uuid, signedIn, q }: { t: Template; open: boolean; uuid
           >
             {copied ? "Copiado ✓" : "Copiar resposta"}
           </button>
-          {uuid && (
-            <>
-              <Link
-                to="/gerir"
-                search={{ editar: uuid, q }}
-                className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent"
-              >
-                Editar
-              </Link>
-              {signedIn ? (
-                <button
-                  onClick={remove}
-                  className="rounded-md border px-4 py-2 text-sm font-medium text-destructive hover:bg-accent"
-                >
-                  Apagar
-                </button>
-              ) : (
-                <Link to="/auth" className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent">
-                  Entrar para apagar
-                </Link>
-              )}
-            </>
+          {uuid && perms.edit && (
+            <Link to="/gerir" search={{ editar: uuid, q }} className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent">
+              Editar
+            </Link>
           )}
-
+          {uuid && perms.delete && (
+            <button onClick={remove} className="rounded-md border px-4 py-2 text-sm font-medium text-destructive hover:bg-accent">
+              Apagar
+            </button>
+          )}
         </div>
 
       </div>
@@ -100,24 +87,45 @@ function Card({ t, open, uuid, signedIn, q }: { t: Template; open: boolean; uuid
 function Index() {
   const { q: initialQ } = Route.useSearch();
   const [q, setQ] = useState(initialQ ?? "");
-  const [signedIn, setSignedIn] = useState(false);
-  useEffect(() => {
-    let on = true;
-    supabase.auth.getSession().then(({ data }) => {
-      if (on) setSignedIn(!!data.session);
-    });
-    return () => {
-      on = false;
-    };
-  }, []);
-  const { data: custom = [] } = useQuery(customQuery);
+  const qc = useQueryClient();
+  const { data: perms } = useQuery(permissoesQuery);
+  const { data: custom = [] } = useQuery({ ...customQuery, enabled: !!perms?.search });
   const results = useMemo(() => searchTemplates(q, custom), [q, custom]);
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    qc.clear();
+    window.location.reload();
+  };
+
+  if (!perms) return null;
+  if (!perms.search)
+    return (
+      <main className="mx-auto max-w-md px-4 py-24 text-center">
+        <h1 className="text-2xl font-bold">Respostas Suporte RAL+</h1>
+        {perms.signedIn ? (
+          <>
+            <p className="mt-3 text-muted-foreground">A conta {perms.email} ainda não tem acesso. Peça a um administrador para a autorizar.</p>
+            <button onClick={signOut} className="mt-6 rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent">Sair</button>
+          </>
+        ) : (
+          <>
+            <p className="mt-3 text-muted-foreground">Entre com uma conta autorizada para pesquisar respostas.</p>
+            <Link to="/auth" className="mt-6 inline-block rounded-md bg-primary px-5 py-2 font-medium text-primary-foreground">Entrar</Link>
+          </>
+        )}
+      </main>
+    );
 
   return (
     <main className="mx-auto min-h-screen max-w-3xl px-4 py-12">
       <div className="flex items-start justify-between gap-4">
         <h1 className="text-3xl font-bold tracking-tight">Respostas Suporte RAL+</h1>
-        <Link to="/gerir" search={q ? { q } : {}} className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent">+ Adicionar resposta</Link>
+        <div className="flex flex-wrap justify-end gap-2">
+          {perms.create && <Link to="/gerir" search={q ? { q } : {}} className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent">+ Adicionar resposta</Link>}
+          {perms.admin && <Link to="/utilizadores" className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent">Utilizadores</Link>}
+          <button onClick={signOut} className="rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-accent">Sair</button>
+        </div>
       </div>
       <p className="mt-1 text-muted-foreground">Escreva o tema do ticket e copie a resposta a dar.</p>
       <input
@@ -141,7 +149,7 @@ function Index() {
             key={"uuid" in t ? String(t.uuid) : t.id}
             t={t}
             uuid={"uuid" in t ? String(t.uuid) : undefined}
-            signedIn={signedIn}
+            perms={perms}
             q={q}
             open={!!q.trim() && i === 0}
           />

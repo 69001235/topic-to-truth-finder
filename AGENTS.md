@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - All replies (manual + team-added) live in the `respostas` table (`ref` = manual number, `category`); src/data/templates.json is only the original seed and test fixture — so every reply is editable/deletable.
+- Access is an email allow-list in `utilizadores` (per-permission flags, admin implies all), enforced by RLS via `tem_permissao()`; the UI only hides buttons.
