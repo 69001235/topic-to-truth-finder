@@ -67,7 +67,7 @@ function Utilizadores() {
   };
   const toggle = async (row: { email: string } & Record<Col, boolean>, c: Col) => {
     if (row.email === me.email && c === "is_admin") return setMsg("Não pode retirar a si próprio o papel de administrador.");
-    await supabase.from("utilizadores").update({ [c]: !row[c] }).eq("email", row.email);
+    await supabase.from("utilizadores").update({ [c]: !row[c] } as Partial<Record<Col, boolean>>).eq("email", row.email);
     refresh();
   };
   const remove = async (e: string) => {
