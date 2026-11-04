@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { customQuery } from "@/lib/respostas";
+import { permissoesQuery } from "@/lib/permissoes";
 
 /** `?editar=<id>` opens the form with that answer loaded; `?q=` keeps the search term to return to. */
 export const gerirSearch = (s: Record<string, unknown>): { editar?: string; q?: string } => {
@@ -35,6 +36,7 @@ function Gerir() {
   const navigate = useNavigate();
   const { editar, q } = Route.useSearch();
   const { data = [] } = useQuery(customQuery);
+  const { data: perms } = useQuery(permissoesQuery);
   const [form, setForm] = useState(empty);
   const [editing, setEditing] = useState<string | null>(null);
   const [msg, setMsg] = useState("");
