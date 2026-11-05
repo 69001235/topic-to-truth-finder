@@ -34,7 +34,7 @@ function AuthPage() {
     if (mode === "in") {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) setMsg("Email ou palavra-passe incorretos.");
-      else navigate({ to: "/gerir" });
+      else navigate({ to: "/" });
     } else {
       const { error } = await supabase.auth.signUp({
         email,
@@ -50,7 +50,7 @@ function AuthPage() {
     const r = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
     if (r.error) return setMsg("Não foi possível entrar com Google.");
     if (r.redirected) return;
-    navigate({ to: "/gerir" });
+    navigate({ to: "/" });
   };
 
   return (
