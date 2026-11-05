@@ -122,6 +122,7 @@ function Index() {
       <div className="flex items-start justify-between gap-4">
         <h1 className="text-3xl font-bold tracking-tight">Respostas Suporte RAL+</h1>
         <div className="flex flex-wrap justify-end gap-2">
+          <Link to="/construir" className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">Construir resposta</Link>
           {perms.create && <Link to="/gerir" search={q ? { q } : {}} className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent">+ Adicionar resposta</Link>}
           {perms.admin && <Link to="/utilizadores" className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent">Utilizadores</Link>}
           <button onClick={signOut} className="rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-accent">Sair</button>

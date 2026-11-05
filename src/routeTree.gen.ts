@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedConstruirRouteImport } from './routes/_authenticated/construir'
 import { Route as AuthenticatedGerirRouteImport } from './routes/_authenticated/gerir'
 import { Route as AuthenticatedUtilizadoresRouteImport } from './routes/_authenticated/utilizadores'
 
@@ -29,6 +30,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedConstruirRoute = AuthenticatedConstruirRouteImport.update({
+  id: '/construir',
+  path: '/construir',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedGerirRoute = AuthenticatedGerirRouteImport.update({
   id: '/gerir',
   path: '/gerir',
@@ -44,12 +50,14 @@ const AuthenticatedUtilizadoresRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/construir': typeof AuthenticatedConstruirRoute
   '/gerir': typeof AuthenticatedGerirRoute
   '/utilizadores': typeof AuthenticatedUtilizadoresRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/construir': typeof AuthenticatedConstruirRoute
   '/gerir': typeof AuthenticatedGerirRoute
   '/utilizadores': typeof AuthenticatedUtilizadoresRoute
 }
@@ -58,19 +66,21 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/construir': typeof AuthenticatedConstruirRoute
   '/_authenticated/gerir': typeof AuthenticatedGerirRoute
   '/_authenticated/utilizadores': typeof AuthenticatedUtilizadoresRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/gerir' | '/utilizadores'
+  fullPaths: '/' | '/auth' | '/construir' | '/gerir' | '/utilizadores'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/gerir' | '/utilizadores'
+  to: '/' | '/auth' | '/construir' | '/gerir' | '/utilizadores'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/construir'
     | '/_authenticated/gerir'
     | '/_authenticated/utilizadores'
   fileRoutesById: FileRoutesById
@@ -104,6 +114,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/construir': {
+      id: '/_authenticated/construir'
+      path: '/construir'
+      fullPath: '/construir'
+      preLoaderRoute: typeof AuthenticatedConstruirRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/gerir': {
       id: '/_authenticated/gerir'
       path: '/gerir'
@@ -122,11 +139,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedConstruirRoute: typeof AuthenticatedConstruirRoute
   AuthenticatedGerirRoute: typeof AuthenticatedGerirRoute
   AuthenticatedUtilizadoresRoute: typeof AuthenticatedUtilizadoresRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedConstruirRoute: AuthenticatedConstruirRoute,
   AuthenticatedGerirRoute: AuthenticatedGerirRoute,
   AuthenticatedUtilizadoresRoute: AuthenticatedUtilizadoresRoute,
 }
