@@ -84,7 +84,7 @@ function Utilizadores() {
         <Link to="/" className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent">← Pesquisa</Link>
       </div>
       <p className="mt-1 text-muted-foreground">
-        Só os emails desta lista conseguem usar a aplicação. A pessoa entra com Google ou cria conta com o mesmo email.
+        Só os emails desta lista têm acesso à aplicação.
       </p>
       <form onSubmit={add} className="mt-6 flex gap-2">
         <input
