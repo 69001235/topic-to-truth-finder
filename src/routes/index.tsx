@@ -90,7 +90,18 @@ function Index() {
   const qc = useQueryClient();
   const { data: perms } = useQuery(permissoesQuery);
   const { data: custom = [] } = useQuery({ ...customQuery, enabled: !!perms?.search });
-  const results = useMemo(() => searchTemplates(q, custom), [q, custom]);
+  const results = useMemo(() => {
+    const r = searchTemplates(q, custom);
+    if (q.trim()) return r;
+    const key = (id: string) => (id === "+" ? "999" : id);
+    return [...r].sort((a, b) => key(a.id).localeCompare(key(b.id), undefined, { numeric: true }));
+  }, [q, custom]);
+  /** Groups by major theme, keeping the order in which themes first appear. */
+  const groups = useMemo(() => {
+    const m = new Map<string, Template[]>();
+    for (const t of results) m.set(t.category, [...(m.get(t.category) ?? []), t]);
+    return [...m.entries()];
+  }, [results]);
 
   const signOut = async () => {
     await supabase.auth.signOut();
@@ -145,16 +156,22 @@ function Index() {
       </div>
       <div className="mt-8 space-y-3">
         {results.length === 0 && <p className="text-muted-foreground">Nenhuma resposta encontrada para este tema.</p>}
-        {results.map((t, i) => (
-          <Card
-            key={"uuid" in t ? String(t.uuid) : t.id}
-            t={t}
-            uuid={"uuid" in t ? String(t.uuid) : undefined}
-            perms={perms}
-            q={q}
-            open={!!q.trim() && i === 0}
-          />
-
+        {groups.map(([cat, items]) => (
+          <section key={cat} className="space-y-3">
+            <h2 className="pt-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+              {cat} <span className="font-normal">({items.length})</span>
+            </h2>
+            {items.map((t) => (
+              <Card
+                key={"uuid" in t ? String(t.uuid) : t.id}
+                t={t}
+                uuid={"uuid" in t ? String(t.uuid) : undefined}
+                perms={perms}
+                q={q}
+                open={!!q.trim() && t === results[0]}
+              />
+            ))}
+          </section>
         ))}
 
       </div>
