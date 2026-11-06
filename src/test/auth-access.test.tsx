@@ -31,7 +31,7 @@ describe("Existing-account access", () => {
     render(<Page />);
     fireEvent.change(screen.getByPlaceholderText("Email"), { target: { value: "admin@example.test" } });
     fireEvent.change(screen.getByPlaceholderText("Palavra-passe"), { target: { value: "test-only-password" } });
-    fireEvent.click(screen.getByRole("button", { name: "Entrar", exact: true }));
+    fireEvent.click(screen.getByRole("button", { name: /^Entrar$/ }));
     await waitFor(() => expect(mocks.signIn).toHaveBeenCalledWith({ email: "admin@example.test", password: "test-only-password" }));
     expect(mocks.signUp).not.toHaveBeenCalled();
     expect(mocks.navigate).toHaveBeenCalledWith({ to: "/" });
