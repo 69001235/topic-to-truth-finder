@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedConstruirRouteImport } from './routes/_authenticated/construir'
 import { Route as AuthenticatedGerirRouteImport } from './routes/_authenticated/gerir'
 import { Route as AuthenticatedUtilizadoresRouteImport } from './routes/_authenticated/utilizadores'
+import { Route as AuthConviteRouteImport } from './routes/auth_.convite'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +47,11 @@ const AuthenticatedUtilizadoresRoute =
     path: '/utilizadores',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthConviteRoute = AuthConviteRouteImport.update({
+  id: '/auth_/convite',
+  path: '/auth/convite',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/construir': typeof AuthenticatedConstruirRoute
   '/gerir': typeof AuthenticatedGerirRoute
   '/utilizadores': typeof AuthenticatedUtilizadoresRoute
+  '/auth/convite': typeof AuthConviteRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/construir': typeof AuthenticatedConstruirRoute
   '/gerir': typeof AuthenticatedGerirRoute
   '/utilizadores': typeof AuthenticatedUtilizadoresRoute
+  '/auth/convite': typeof AuthConviteRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -69,12 +77,15 @@ export interface FileRoutesById {
   '/_authenticated/construir': typeof AuthenticatedConstruirRoute
   '/_authenticated/gerir': typeof AuthenticatedGerirRoute
   '/_authenticated/utilizadores': typeof AuthenticatedUtilizadoresRoute
+  '/auth_/convite': typeof AuthConviteRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/construir' | '/gerir' | '/utilizadores'
+  fullPaths:
+    '/' | '/auth' | '/construir' | '/gerir' | '/utilizadores' | '/auth/convite'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/construir' | '/gerir' | '/utilizadores'
+  to:
+    '/' | '/auth' | '/construir' | '/gerir' | '/utilizadores' | '/auth/convite'
   id:
     | '__root__'
     | '/'
@@ -83,12 +94,14 @@ export interface FileRouteTypes {
     | '/_authenticated/construir'
     | '/_authenticated/gerir'
     | '/_authenticated/utilizadores'
+    | '/auth_/convite'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  AuthConviteRoute: typeof AuthConviteRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -135,6 +148,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUtilizadoresRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/auth_/convite': {
+      id: '/auth_/convite'
+      path: '/auth/convite'
+      fullPath: '/auth/convite'
+      preLoaderRoute: typeof AuthConviteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -157,6 +177,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  AuthConviteRoute: AuthConviteRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

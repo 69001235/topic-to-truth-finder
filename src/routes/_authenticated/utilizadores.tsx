@@ -3,6 +3,10 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { permissoesQuery } from "@/lib/permissoes";
+import { useServerFn } from "@tanstack/react-start";
+import { autorizarEConvidar } from "@/lib/utilizadores.functions";
+import { Button } from "@/components/ui/button";
+import { Mail, LoaderCircle } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/utilizadores")({
   head: () => ({
@@ -41,6 +45,9 @@ function Utilizadores() {
   });
   const [email, setEmail] = useState("");
   const [msg, setMsg] = useState("");
+  const [failed, setFailed] = useState(false);
+  const [busy, setBusy] = useState("");
+  const invite = useServerFn(autorizarEConvidar);
   const refresh = () => {
     qc.invalidateQueries({ queryKey: ["utilizadores"] });
     qc.invalidateQueries({ queryKey: ["permissoes"] });
@@ -59,11 +66,24 @@ function Utilizadores() {
     e.preventDefault();
     const v = email.trim().toLowerCase();
     if (!v.includes("@")) return setMsg("Email inválido.");
-    const { error } = await supabase.from("utilizadores").insert({ email: v });
-    if (error) return setMsg(error.code === "23505" ? "Esse email já está na lista." : "Erro: " + error.message);
-    setEmail("");
+    await sendInvite(v, false);
+  };
+  const sendInvite = async (email: string, reenviar: boolean) => {
+    if (busy) return;
+    setBusy(email);
     setMsg("");
-    refresh();
+    try {
+      const result = await invite({ data: { email, reenviar } });
+      setMsg(result.message);
+      setFailed(result.status === "failed");
+      if (!reenviar) setEmail("");
+    } catch (error) {
+      setFailed(true);
+      setMsg(error instanceof Error ? error.message : "Não foi possível autorizar e enviar o convite.");
+    } finally {
+      refresh();
+      setBusy("");
+    }
   };
   const toggle = async (row: { email: string } & Record<Col, boolean>, c: Col) => {
     if (row.email === me.email && c === "is_admin") return setMsg("Não pode retirar a si próprio o papel de administrador.");
@@ -89,16 +109,20 @@ function Utilizadores() {
       <form onSubmit={add} className="mt-6 flex gap-2">
         <input
           type="email"
+          aria-label="Email a autorizar"
+          required
+          disabled={!!busy}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="nome@exemplo.pt"
-          className="flex-1 rounded-lg border bg-card px-4 py-3 outline-none focus:ring-2 focus:ring-ring"
+          className="min-w-0 flex-1 rounded-lg border bg-card px-4 py-3 outline-none focus:ring-2 focus:ring-ring"
         />
-        <button className="rounded-md bg-primary px-5 py-2 font-medium text-primary-foreground hover:bg-primary/90">
-          Autorizar
-        </button>
+        <Button disabled={!!busy} className="h-auto whitespace-normal px-5 py-2">
+          {busy ? <LoaderCircle className="size-4 animate-spin motion-reduce:animate-none" /> : <Mail className="size-4" />}
+          {busy ? "A enviar…" : "Autorizar e convidar"}
+        </Button>
       </form>
-      {msg && <p className="mt-2 text-sm text-destructive">{msg}</p>}
+      {msg && <p role="status" className={`mt-2 text-sm ${failed ? "text-destructive" : "text-foreground"}`}>{msg}</p>}
       <div className="mt-6 overflow-x-auto rounded-xl border bg-card">
         <table className="w-full text-sm">
           <thead className="border-b bg-muted text-left">
@@ -118,7 +142,12 @@ function Utilizadores() {
                   </td>
                 ))}
                 <td className="p-3 text-right">
-                  <button onClick={() => remove(r.email)} className="text-destructive hover:underline">Remover</button>
+                  <div className="flex items-center justify-end gap-1">
+                    <Button type="button" variant="ghost" size="icon" title="Enviar convite" aria-label={`Enviar convite a ${r.email}`} disabled={!!busy} onClick={() => sendInvite(r.email, true)}>
+                      {busy === r.email ? <LoaderCircle className="size-4 animate-spin motion-reduce:animate-none" /> : <Mail className="size-4" />}
+                    </Button>
+                    <Button type="button" variant="ghost" onClick={() => remove(r.email)} className="text-destructive">Remover</Button>
+                  </div>
                 </td>
               </tr>
             ))}

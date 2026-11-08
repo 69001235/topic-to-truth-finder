@@ -1,5 +1,9 @@
 # Roadmap
 
+- [ ] Juntar autorização e envio de convite, com validação de administrador e opção de repetir o envio.
+- [ ] Permitir aceitar o convite e definir a palavra-passe antes de abrir a pesquisa.
+- [ ] Verificar permissões, convites e acesso do administrador.
+
 - [x] Confirmar sessão do administrador existente e acesso à administração antes de fechar inscrições públicas.
 - [x] Remover criação pública de conta do ecrã de entrada, preservando entrada de contas existentes.
 - [ ] Desativar inscrições públicas nas definições de autenticação — bloqueado: ferramenta exige valor atual de proteção de palavras-passe, que a leitura disponível não fornece; alterar apenas «Disable sign-up» em More → Users → Auth settings.
