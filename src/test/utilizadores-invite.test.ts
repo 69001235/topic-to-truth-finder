@@ -27,7 +27,10 @@ describe("Authorization and invitation", () => {
     expect(await run()).toMatchObject({ status: "sent" });
     expect(mocks.insert).toHaveBeenCalledWith({ email: "person@example.test" });
     expect(mocks.invite).toHaveBeenCalledWith("person@example.test", { redirectTo: "https://topic-to-truth-finder.lovable.app/auth/convite" });
-    expect(mocks.insert.mock.invocationCallOrder[0]).toBeLessThan(mocks.invite.mock.invocationCallOrder[0]);
+    const inserted = mocks.insert.mock.invocationCallOrder[0];
+    const invited = mocks.invite.mock.invocationCallOrder[0];
+    if (inserted === undefined || invited === undefined) throw new Error("Missing authorization or invitation");
+    expect(inserted).toBeLessThan(invited);
   });
   it("only an administrator can authorize or send invitations", async () => {
     mocks.rpc.mockResolvedValue({ data: false, error: null });
@@ -51,7 +54,7 @@ describe("Authorization and invitation", () => {
     expect(mocks.insert).not.toHaveBeenCalled();
     expect(mocks.invite).toHaveBeenCalledTimes(1);
     mocks.lookup.mockResolvedValue({ data: null, error: null });
-    await expect(run("other@example.test", true)).rejects.toThrow("Autorize d’abord".replace("d’abord", "primeiro"));
+    await expect(run("other@example.test", true)).rejects.toThrow("Autorize primeiro");
     expect(mocks.invite).toHaveBeenCalledTimes(1);
   });
   it("keeps existing accounts usable without attempting registration", async () => {
