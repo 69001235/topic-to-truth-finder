@@ -11,4 +11,5 @@
 
 - All replies (manual + team-added) live in the `respostas` table (`ref` = manual number, `category`); src/data/templates.json is only the original seed and test fixture — so every reply is editable/deletable.
 - Access is an email allow-list in `utilizadores` (per-permission flags, admin implies all), enforced by RLS via `tem_permissao()`; the UI only hides buttons.
-- Public authentication UI only signs in existing accounts; provision new accounts through Cloud invitations and authorize the same email in `utilizadores` to keep registration separate from data permissions.
+- Public authentication UI only signs in existing accounts; administrator authorization and Cloud invitations run together through an authenticated server function that checks `tem_permissao('admin')` before loading the privileged client. Data permissions remain in `utilizadores` so an account alone grants no application access.
+- Invitation emails return to the published `/auth/convite` page for password setup; keep the server-controlled redirect aligned with the primary app domain so recipients never land on the administrator's preview or a caller-provided URL.
