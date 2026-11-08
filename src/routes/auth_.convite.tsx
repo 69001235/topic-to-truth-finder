@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 
-export const Route = createFileRoute("/auth/convite")({
+export const Route = createFileRoute("/auth_/convite")({
   head: () => ({ meta: [
     { title: "Aceitar convite · Suporte RAL+" },
     { name: "description", content: "Defina a sua palavra-passe para aceder ao Suporte RAL+ por convite." },
