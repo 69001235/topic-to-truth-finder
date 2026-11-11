@@ -13,26 +13,25 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { supabase } from "@/integrations/supabase/client";
+import { AppShell } from "@/components/app-shell";
+import { Alert } from "@/components/ui/alert";
+import { Button, buttonVariants } from "@/components/ui/button";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
-        </p>
-        <div className="mt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Go home
-          </Link>
+    <AppShell>
+      <div className="grid grid-cols-12 gap-x-6">
+        <div className="col-span-12 space-y-4 lg:col-span-8 lg:col-start-3">
+          <h1>Página não encontrada</h1>
+          <p>O endereço que indicou não existe ou foi alterado.</p>
+          <div>
+            <Link to="/" className={buttonVariants()}>
+              Voltar ao início
+            </Link>
+          </div>
         </div>
       </div>
-    </div>
+    </AppShell>
   );
 }
 
@@ -44,33 +43,30 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
   }, [error]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
-        </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-2">
-          <button
-            onClick={() => {
-              router.invalidate();
-              reset();
-            }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Try again
-          </button>
-          <a
-            href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-          >
-            Go home
-          </a>
+    <AppShell>
+      <div className="grid grid-cols-12 gap-x-6">
+        <div className="col-span-12 space-y-4 lg:col-span-8 lg:col-start-3">
+          <h1>Não foi possível carregar a página</h1>
+          <Alert variant="destructive">
+            Ocorreu um problema do nosso lado. Pode tentar de novo ou voltar ao início.
+          </Alert>
+          <div className="flex flex-wrap gap-3">
+            <Button
+              type="button"
+              onClick={() => {
+                router.invalidate();
+                reset();
+              }}
+            >
+              Tentar novamente
+            </Button>
+            <a href="/" className={buttonVariants({ variant: "secondary" })}>
+              Voltar ao início
+            </a>
+          </div>
         </div>
       </div>
-    </div>
+    </AppShell>
   );
 }
 
@@ -81,12 +77,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Respostas Suporte RAL+" },
       { name: "description", content: "Respostas standard do Suporte RAL+" },
-      { name: "author", content: "Lovable" },
       { property: "og:title", content: "Respostas Suporte RAL+" },
       { property: "og:description", content: "Respostas standard do Suporte RAL+" },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:card", content: "summary" },
     ],
     links: [
       {
@@ -104,7 +98,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="pt-PT">
       <head>
         <HeadContent />
       </head>
