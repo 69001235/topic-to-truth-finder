@@ -24,3 +24,11 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+## Environment variables
+Copy `.env` and fill in the required values. AI features use the Groq API:
+
+- `GROQ_API_KEY` — Groq API key (server-side). Required for the "construir resposta" feature.
+- `GROQ_MODEL` — Groq model to use (optional, defaults to `llama-3.3-70b-versatile`).
+
+Create an API key in the Groq console: https://console.groq.com/keys
