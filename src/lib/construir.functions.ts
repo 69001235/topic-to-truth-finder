@@ -4,6 +4,15 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const DEFAULT_GROQ_MODEL = "llama-3.3-70b-versatile";
 
+async function readGroqError(res: Response): Promise<string> {
+  try {
+    const body = (await res.json()) as { error?: { message?: string } };
+    return (body?.error?.message ?? "").slice(0, 300);
+  } catch {
+    return "";
+  }
+}
+
 /** Drafts a reply to a ticket using only the replies stored in `respostas`. */
 export const construirResposta = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -50,10 +59,15 @@ export const construirResposta = createServerFn({ method: "POST" })
       });
 
       if (!res.ok) {
+        const detail = await readGroqError(res);
+        console.error(`[Groq] HTTP ${res.status}${detail ? `: ${detail}` : ""}`);
         if (res.status === 429) throw new Error("Demasiados pedidos. Tente daqui a pouco.");
         if (res.status === 401) throw new Error("Chave da API Groq inválida.");
         if (res.status === 402) throw new Error("Créditos de IA esgotados.");
-        throw new Error("Não foi possível construir a resposta. Tente novamente.");
+        if (res.status === 404) throw new Error(`Modelo Groq não encontrado ("${model}").`);
+        throw new Error(
+          `Não foi possível construir a resposta (Groq ${res.status})${detail ? `: ${detail}` : ""}.`,
+        );
       }
 
       const json = (await res.json()) as {
