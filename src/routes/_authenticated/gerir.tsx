@@ -142,10 +142,6 @@ function Gerir() {
     window.scrollTo(0, 0);
   }, [editar, data]);
 
-  const clearParam = () => {
-    if (editar) navigate({ to: "/gerir", search: {}, replace: true });
-  };
-
   /** Returns to the search screen, restoring the term the person had typed. */
   const backToSearch = () => navigate({ to: "/", search: q ? { q } : {}, replace: true });
 
@@ -200,7 +196,7 @@ function Gerir() {
   const cancel = () => {
     resetForm();
     setMsg("");
-    clearParam();
+    backToSearch();
   };
 
   /** Moves one answer to another section straight away (needs permission to edit). */
