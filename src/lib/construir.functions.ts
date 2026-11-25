@@ -1,8 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { searchTemplates } from "@/lib/search";
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 const DEFAULT_GROQ_MODEL = "openai/gpt-oss-120b";
+/** Groq's free tier allows 8K tokens per minute for this model; keep the manual small. */
+const MAX_MANUAL_CHARS = 12000;
+const MAX_ANSWERS = 10;
 
 async function readGroqError(res: Response): Promise<string> {
   try {
@@ -26,11 +30,29 @@ export const construirResposta = createServerFn({ method: "POST" })
     if (!ok) throw new Error("Sem permissão para pesquisar.");
     const { data: rows, error } = await context.supabase
       .from("respostas")
-      .select("ref, category, title, note, text");
+      .select("ref, category, title, keywords, note, text");
     if (error) throw new Error(error.message);
-    const manual = (rows ?? [])
-      .map((r) => `### [${r.ref}] ${r.title} (${r.category})\nQuando usar: ${r.note}\n${r.text}`)
-      .join("\n\n");
+
+    const answers = (rows ?? []).map((r) => ({
+      id: r.ref,
+      title: r.title,
+      category: r.category,
+      keywords: r.keywords ?? "",
+      note: r.note ?? "",
+      text: r.text,
+    }));
+
+    // Sending every standard reply can exceed the model's per-minute token
+    // limit, so send only the answers that best match the ticket. If nothing
+    // matches, fall back to all of them (still capped below).
+    const matched = searchTemplates(data.ticket, answers);
+    const chosen = (matched.length ? matched : answers).slice(0, MAX_ANSWERS);
+    let manual = "";
+    for (const r of chosen) {
+      const entry = `### [${r.id}] ${r.title} (${r.category})\nQuando usar: ${r.note}\n${r.text}`;
+      if (manual && manual.length + entry.length + 2 > MAX_MANUAL_CHARS) break;
+      manual = manual ? `${manual}\n\n${entry}` : entry;
+    }
 
     const apiKey = process.env["GROQ_API_KEY"];
     if (!apiKey) throw new Error("GROQ_API_KEY não configurada.");
@@ -61,7 +83,13 @@ export const construirResposta = createServerFn({ method: "POST" })
       if (!res.ok) {
         const detail = await readGroqError(res);
         console.error(`[Groq] HTTP ${res.status}${detail ? `: ${detail}` : ""}`);
-        if (res.status === 429) throw new Error("Demasiados pedidos. Tente daqui a pouco.");
+        if (res.status === 429) {
+          const wait =
+            res.headers.get("retry-after") ?? res.headers.get("x-ratelimit-reset-tokens");
+          throw new Error(
+            `Limite de pedidos da Groq atingido${wait ? ` (repõe em ${wait})` : ""}. Tente novamente.`,
+          );
+        }
         if (res.status === 401) throw new Error("Chave da API Groq inválida.");
         if (res.status === 402) throw new Error("Créditos de IA esgotados.");
         if (res.status === 404) throw new Error(`Modelo Groq não encontrado ("${model}").`);
