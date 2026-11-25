@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Check, ChevronDown } from "lucide-react";
+import { Check, ChevronDown, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { customQuery } from "@/lib/respostas";
+import { downloadAnswersPdf } from "@/lib/export-pdf";
 import { permissoesQuery, type Permissoes } from "@/lib/permissoes";
 
 import { useMemo, useRef, useState } from "react";
@@ -148,6 +149,8 @@ function Index() {
   const resultsRef = useRef<HTMLHeadingElement>(null);
   const { data: perms } = useQuery(permissoesQuery);
   const { data: custom = [] } = useQuery({ ...customQuery, enabled: !!perms?.search });
+  const [downloading, setDownloading] = useState(false);
+  const [pdfError, setPdfError] = useState("");
   const results = useMemo(() => {
     const r = searchTemplates(q, custom);
     if (q.trim()) return r;
@@ -174,6 +177,20 @@ function Index() {
       confirmLabel: "Apagar",
       destructive: true,
     });
+
+  /** Exports every answer, not just the ones matching the current search. */
+  const downloadPdf = async () => {
+    if (!custom.length) return;
+    setPdfError("");
+    setDownloading(true);
+    try {
+      await downloadAnswersPdf(custom);
+    } catch {
+      setPdfError("Não foi possível gerar o PDF. Tente novamente.");
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   if (!perms) return null;
   if (!perms.search)
@@ -264,9 +281,28 @@ function Index() {
           aria-labelledby="resultados"
           className="col-span-12 space-y-4 lg:col-span-10 lg:col-start-2"
         >
-          <h2 id="resultados" ref={resultsRef} tabIndex={-1}>
-            Resultados
-          </h2>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 id="resultados" ref={resultsRef} tabIndex={-1}>
+              Resultados
+            </h2>
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() => void downloadPdf()}
+              disabled={downloading || custom.length === 0}
+              aria-label="Descarregar PDF com todas as perguntas e respostas"
+              title="Inclui todas as perguntas e respostas"
+            >
+              <Download aria-hidden="true" />
+              {downloading ? "A gerar…" : "Descarregar PDF"}
+            </Button>
+          </div>
+          {pdfError && (
+            <Alert variant="destructive" role="none">
+              {pdfError}
+            </Alert>
+          )}
           <div role="status">
             {count === 0 ? (
               <Alert variant="info" role="none">
